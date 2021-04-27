@@ -8,8 +8,8 @@ const Tab = createBottomTabNavigator();
 const TabNavigation = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Images" component={ImagesScreen} />
       <Tab.Screen name="Audio" component={AudioScreen} />
+      <Tab.Screen name="Images" component={ImagesScreen} />
     </Tab.Navigator>
   );
 };

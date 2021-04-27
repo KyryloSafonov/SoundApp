@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
-import StackNavigation from './navigations/StackNavigation';
-import store from './redux/store';
+import StackNavigation from './src/navigations/StackNavigation';
+import store from './src/redux/store';
 
 const App = () => {
   return (

@@ -12,7 +12,7 @@ import TrackPlayer from 'react-native-track-player';
 import {fetchAudio} from '../redux/actions/audioAction';
 import {useDispatch, useSelector} from 'react-redux';
 
-const AudioScreen = ({navigation}) => {
+const AudioScreen = () => {
   const dispatch = useDispatch();
   const {data, isLoading, error} = useSelector(state => state.audio);
 
@@ -49,32 +49,6 @@ const AudioScreen = ({navigation}) => {
     TrackPlayer.pause();
   };
 
-  const downloadAndPlay = url => {
-    const dirs = RNFetchBlob.fs.dirs.DocumentDir;
-    let file_url = url;
-    let file_path = `${dirs}/player-offline-sample.mp3`;
-    console.log(`Ready to download to ${file_path}`);
-    RNFetchBlob.config({path: file_path})
-      .fetch('GET', file_url, {})
-      .then(res => {
-        console.log(`File downloaded to ${file_path}`);
-        TrackPlayer.setupPlayer().then(() => {
-          let track = {
-            id: 'try',
-            url: file_path,
-            title: 'try artist',
-            artist: 'artist',
-          };
-          TrackPlayer.add([track]).then(function () {
-            console.log('Track Added Created');
-            TrackPlayer.play();
-          });
-        });
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
   const requestToPermissions = async () => {
     try {
       const granted = await PermissionsAndroid.request(
