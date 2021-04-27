@@ -1,12 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Button, PermissionsAndroid, StyleSheet} from 'react-native';
-import styleAudioScreen from '../styles/styleLoginScreen';
-import SoundPlayer from 'react-native-sound-player';
+import {
+  View,
+  Text,
+  Button,
+  PermissionsAndroid,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import TrackPlayer from 'react-native-track-player';
+import {fetchAudio} from '../redux/actions/audioAction';
+import {useDispatch, useSelector} from 'react-redux';
 
 const AudioScreen = ({navigation}) => {
-  const [data, setData] = useState(null);
+  const dispatch = useDispatch();
+  const {data, isLoading, error} = useSelector(state => state.audio);
 
   const playButtonHandler = url => {
     return () => {
@@ -80,33 +88,39 @@ const AudioScreen = ({navigation}) => {
         },
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('startDownload...');
+        return true;
       }
+      return false;
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    fetch('https://control.neurobodygym.com/api/demo')
-      .then(response => response.json())
-      .then(data => {
-        setData(data);
-      });
+    if(requestToPermissions()) {
+      dispatch(fetchAudio());
+    }
+    dispatch(fetchAudio());
+    // fetch('https://control.neurobodygym.com/api/demo')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     setData(data);
+    //   });
     // requestToPermissions();
-    // downloadAndPlay(
-    //   'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3',
-    // );
   }, []);
 
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
   return (
     <View style={styles.container}>
       <View style={styles.tracksList}>
         {data
           ? data.map((e, index) => (
               <View key={index} style={styles.track}>
-                <Text
-                  style={styles.trackTitle}>{`Track number: ${index + 1}`}</Text>
+                <Text style={styles.trackTitle}>{`Track number: ${
+                  index + 1
+                }`}</Text>
                 <View style={styles.ButtonsWrapper}>
                   <View style={styles.playButton}>
                     <Button

@@ -9,15 +9,19 @@ import {
   Modal,
   PermissionsAndroid,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import CameraRoll from '@react-native-community/cameraroll';
 import RNFetchBlob from 'rn-fetch-blob';
+import {fetchImages} from '../redux/actions/imagesAction';
+import {useDispatch, useSelector} from 'react-redux';
 
 const ImagesScreen = () => {
+  const dispatch = useDispatch();
+
   const [isVisible, setIsVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const {data, isLoading, error} = useSelector(state => state.images);
   const [modalPic, setModalPic] = useState('');
   const createModalToggler = url => {
     return () => {
@@ -53,15 +57,11 @@ const ImagesScreen = () => {
   };
 
   useEffect(() => {
-    fetch('https://picsum.photos/v2/list')
-      .then(response => response.json())
-      .then(data => {
-        setData(data);
-        setIsLoading(false);
-      })
-      .catch(error => console.log(error));
+    dispatch(fetchImages());
   }, []);
-
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
